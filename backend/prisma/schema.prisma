@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  //provider = "postgresql"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Advogado {
+  id          String  @id @default(uuid())
+  nome        String
+  cpf         String
+  cnpj        String?
+  email       String
+  rua         String
+  numero      String
+  complemento String?
+  bairro      String
+  cep         String
+  cidade      String
+  estado      String
+  celular     String
+  oab         String
+  usuario     String
+  senha       String
+
+  clientes  Cliente[]
+  processos Processo[]
+
+  create_at DateTime? @default(now())
+  update_at DateTime? @default(now())
+
+  @@map("advogados")
+}
+
+model Cliente {
+  id           String  @id @default(uuid())
+  nome         String
+  estadoCivil  String
+  uniaoEstavel String
+  profissao    String
+  cpf          String
+  cnpj         String?
+  email        String
+  rua          String
+  numero       String
+  complemento  String?
+  bairro       String
+  cep          String
+  cidade       String
+  estado       String
+  celular      String
+
+  advogados Advogado[]
+  processos Processo[]
+
+  create_at DateTime? @default(now())
+  update_at DateTime? @default(now())
+
+  @@map("clientes")
+}
+
+model Processo {
+  id           String @id @default(uuid())
+  numero       String
+  classe       String
+  assunto      String
+  foro         String
+  vara         String
+  juiz         String
+  distribuicao String
+  controle     String
+  area         String
+  valorDaAcao  String
+
+  create_at DateTime? @default(now())
+  update_at DateTime? @default(now())
+
+  advogados  Advogado @relation(fields: [advogadoId], references: [id])
+  advogadoId String
+  clientes   Cliente  @relation(fields: [clienteId], references: [id])
+  clienteId  String
+
+  @@map("processos")
+}
